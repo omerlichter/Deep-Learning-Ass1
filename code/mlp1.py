@@ -21,7 +21,7 @@ def tanh(x):
     x: a n-dim vector (numpy array)
     return: a n-dim vector (numpy array) of tanh values
     """
-    return (np.exp(2 * x) - 1) / (np.exp(2 * x) + 1)
+    return np.tanh(x)
 
 def tanh_diff(x):
     """
@@ -88,6 +88,12 @@ def create_classifier(in_dim, hid_dim, out_dim):
     b = np.zeros(hid_dim)
     U = np.zeros((hid_dim, out_dim))
     b_tag = np.zeros(out_dim)
+
+    W = np.random.randn(W.shape[0], W.shape[1])
+    b = np.random.randn(b.shape[0])
+    U = np.random.randn(U.shape[0], U.shape[1])
+    b_tag = np.random.randn(b_tag.shape[0])
+
     params = [W, b, U, b_tag]
     return params
 
@@ -95,9 +101,13 @@ def create_classifier(in_dim, hid_dim, out_dim):
 if __name__ == '__main__':
     # Sanity checks for softmax. If these fail, your softmax is definitely wrong.
     # If these pass, it may or may not be correct.
-    test1 = tanh(np.array([0.234, 0.8787]))
+    test1 = tanh(np.array([1, 2]))
     print test1
+    assert np.amax(np.fabs(test1 - np.array([0.76159415, 0.96402758]))) <= 1e-6
 
+    test1 = tanh_diff(np.array([1, 2]))
+    print test1
+    assert np.amax(np.fabs(test1 - np.array([0.41997434, 0.070650824]))) <= 1e-6
 
     # Sanity checks. If these fail, your gradient calculation is definitely wrong.
     # If they pass, it is likely, but not certainly, correct.
@@ -107,12 +117,12 @@ if __name__ == '__main__':
 
     def _loss_and_W_grad(W):
         global b
-        loss,grads = loss_and_gradients([1,2,3],0,[W,b,U,b_tag])
+        loss,grads = loss_and_gradients([12,2,3],0,[W,b,U,b_tag])
         return loss,grads[0]
 
     def _loss_and_b_grad(b):
         global W
-        loss,grads = loss_and_gradients([1,2,3],0,[W,b,U,b_tag])
+        loss,grads = loss_and_gradients([12,2,3],0,[W,b,U,b_tag])
         return loss,grads[1]
 
     for _ in xrange(10):
