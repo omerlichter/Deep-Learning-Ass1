@@ -49,11 +49,12 @@ def loss_and_gradients(x, y, params):
     W,b = params
 
     y_hat = softmax(np.dot(x, W) + b)
+    y_real = np.zeros(y_hat.shape)
+    y_real[y] = 1
     loss = -np.log(y_hat[y])
-    gW = np.outer(x, y_hat)
-    gW[:, y] -= x
-    gb = y_hat
-    gb[y] -= 1
+    g_loss_y_hat = -(y_real - y_hat)
+    gW = np.outer(x, g_loss_y_hat)
+    gb = g_loss_y_hat
 
     return loss, [gW,gb]
 
