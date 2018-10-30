@@ -89,10 +89,14 @@ def create_classifier(in_dim, hid_dim, out_dim):
     U = np.zeros((hid_dim, out_dim))
     b_tag = np.zeros(out_dim)
 
-    W = np.random.randn(W.shape[0], W.shape[1])
-    b = np.random.randn(b.shape[0])
-    U = np.random.randn(U.shape[0], U.shape[1])
-    b_tag = np.random.randn(b_tag.shape[0])
+    eps = np.sqrt(6) / (np.sqrt(W.shape[0] + W.shape[1]))
+    W = np.random.uniform(-eps, eps, (W.shape[0], W.shape[1]))
+    eps = np.sqrt(6) / (np.sqrt(b.shape[0]))
+    b = np.random.uniform(-eps, eps, b.shape[0])
+    eps = np.sqrt(6) / (np.sqrt(U.shape[0] + U.shape[1]))
+    U = np.random.uniform(-eps, eps, (U.shape[0], U.shape[1]))
+    eps = np.sqrt(6) / (np.sqrt(b_tag.shape[0]))
+    b_tag = np.random.uniform(-eps, eps, b_tag.shape[0])
 
     params = [W, b, U, b_tag]
     return params

@@ -1,5 +1,4 @@
-import mlp1 as ml
-import loglinear as ll
+import mlpn as mln
 import numpy as np
 import random
 import utils
@@ -22,7 +21,7 @@ def accuracy_on_dataset(dataset, params):
     for label, features in dataset:
         x = feats_to_vec(features)
         y = utils.L2I.get(label)
-        y_hat = ml.predict(x, params)
+        y_hat = mln.predict(x, params)
         if y == y_hat:
             good += 1
         else:
@@ -47,17 +46,13 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
         for label, features in train_data:
             x = feats_to_vec(features) # convert features to a vector.
             y = utils.L2I.get(label)   # convert the label to number if needed.
-            loss, grads = ml.loss_and_gradients(x,y,params)
+            loss, grads = mln.loss_and_gradients(x,y,params)
             cum_loss += loss
 
             # update the parameters according to the gradients
             # and the learning rate.
-            W,b,U,b_tag = params
-            gW,gb,gU,gb_tag = grads
-            W -= learning_rate * gW
-            b -= learning_rate * gb
-            U -= learning_rate * gU
-            b_tag -= learning_rate * gb_tag
+            for i, param in enumerate(params):
+                param -= learning_rate * grads[i]
 
         train_loss = cum_loss / len(train_data)
         train_accuracy = accuracy_on_dataset(train_data, params)
@@ -66,23 +61,30 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
     return params
 
 
+def test(test_data, result_file, params):
+
+    file = open(result_file, "w")
+
+    for label, features in test_data:
+        x = feats_to_vec(features)              # convert features to a vector.
+        y = utils.I2L.get(mln.predict(x, params))   # predict
+        file.write("" + y + "\n")
+    file.close()
+
 if __name__ == '__main__':
 
-    TRAIN_FILE = "data/train"
-    DEV_FILE = "data/dev"
+    result_file = "../data/result"
 
     # write code to load the train and dev sets, set up whatever you need,
     # and call train_classifier.
-    in_dim = 600
-    hid_dim = 30
-    out_dim = 6
     num_iterations = 10
     learning_rate = 0.1
 
     train_data = utils.TRAIN
     dev_data = utils.DEV
-    # ...
-   
-    params = ml.create_classifier(in_dim, hid_dim, out_dim)
+    test_data = utils.TEST
+
+    params = mln.create_classifier([600, 100, 30, 6])
     trained_params = train_classifier(train_data, dev_data, num_iterations, learning_rate, params)
+    test(test_data, result_file , params)
 

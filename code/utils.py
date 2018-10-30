@@ -13,6 +13,7 @@ def text_to_bigrams(text):
 
 TRAIN = [(l,text_to_bigrams(t)) for l,t in read_data("../data/train")]
 DEV   = [(l,text_to_bigrams(t)) for l,t in read_data("../data/dev")]
+TEST   = [(l,text_to_bigrams(t)) for l,t in read_data("../data/test")]
 
 from collections import Counter
 fc = Counter()
@@ -24,6 +25,9 @@ vocab = set([x for x,c in fc.most_common(600)])
 
 # label strings to IDs
 L2I = {l:i for i,l in enumerate(list(sorted(set([l for l,t in TRAIN]))))}
+I2L = {i:l for i,l in zip(L2I.values(), L2I.keys())}
 # feature strings (bigrams) to IDs
 F2I = {f:i for i,f in enumerate(list(sorted(vocab)))}
+
+labels_map = {0: "bla", 1: "bla", 2: "bla", 3: "bla", 4: "bla", 5: "bla"}
 
